@@ -1,0 +1,9 @@
+package packed
+
+import "github.com/gogf/gf/v2/os/gres"
+
+func init() {
+	if err := gres.Add("H4sIAAAAAAAC/wrwZmYRYeBg4GDgL78dw4AE5Bk4GXIz04sSSzLz84r1DUDAMD4zL7NELyW/PE+vuDAnNISVgXHeE/usIs5P/AEchSWfCkM/lAQX9H7g4eMMW+Gjqeepe6pX/4S+Vqf/aX0tfx0vzW3PDq3eZqG/eYHC1haP1I+ZPy01V7q2hKQ/ERc2MbTeOmmC0ATDjy9dfy5lbQkRU09f8kzt2PO0ZeKq01KePReNLmZkYmD4/z/Am51DdPv+//kMDAxKjAwMCE/woXlCFrcnSgvgXpj7xD7rztSDebcNeNreV3Ld3cToPOHZpsN+cav5jk1aUyCywJZz1dFjbqmBC56IVf52LNxTti62YmfJCcNH/42fuHvtO1OhZCF88rtq+kvT6P9CPfeXSW9MrH7LHKBaG+ewNCX0nUer0Nr0+Wo9ht9Ynnhv0Ynl/tec/kbNO9yz7Hjdp9367I1F56YsWMr1RkswZon2uXU/SjfFcpXtPGu0T8xILs9l066ZNf/MZvasWOYg/6RvQ1mu7NK0pvtd2//nh7L6ajyLzJ9++tkdTSbplNfZ3rP8Zm9w5xLyZP6buXbqGWlXvwWHbhyT8n77peJ0hFj/BntZpqn+Wg5nFA8+2zvp170plSFfmotOVYdP+PRh0sLVP+MDjm61nBlqwl/kwpX/LWWjxbZHjXE9sWar+FrXKIjcuHvE45uk534m2Xq+5L5gmVvPD6dK9jzLmGCXVtbr2tzYl/omYK/u3GYF+QsZCyYfrzZ7f3Di8ZMKRVsYc15wS6aWb73Fm1Nk3GCsIJG/ucahKmzJf8bk7Q8Pu6/6+pfX6E2sfnXzTqOgTN8Hteqvjz56nWM3+7zesvVb9+qfn6ju2MrItz6uvtX9YLWlzbP+ffqu2+e4/YjT2vDqXsO/Ey//88FShd3yU1KHGBkYXnIgUgUDw/HaOyipggslVYCTwHFHxyyQAcjKArwZmUSYEbkDOcmBcgcMbGsEkcTmFWRTQckV2cmyKKYexW0qWuJFmIndsxAgwPDf8TYTA3avs7KBlDAzMDO8ZmBgkGEG8QABAAD///SzJvsdBAAA"); err != nil {
+		panic("add binary content to resource manager failed: " + err.Error())
+	}
+}

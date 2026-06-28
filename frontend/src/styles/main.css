@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+/* ============================================
+   Theme tokens
+   ============================================ */
+:root, [data-theme="dark"] {
+  --bg-base:      #0d1117;
+  --bg-surface:   #161b22;
+  --bg-elevated:  #1c2128;
+  --bg-hover:     #21262d;
+  --bg-active:    #2f81f715;
+  --border:        #30363d;
+  --border-muted:  #21262d;
+
+  --text-primary:   #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted:     #6e7681;
+
+  --accent:        #2f81f7;
+  --accent-hover:  #4493f8;
+  --accent-subtle:  #2f81f715;
+  --success:       #3fb950;
+  --warning:       #d29922;
+  --danger:        #f85149;
+  --danger-hover:  #ff6b6b;
+
+  --tab-active-bg: #0d1117;
+  --tab-inactive-bg: #161b22;
+  --tab-hover-bg:  #1c2128;
+}
+
+[data-theme="light"] {
+  --bg-base:      #ffffff;
+  --bg-surface:   #f6f8fa;
+  --bg-elevated:  #ffffff;
+  --bg-hover:     #eaeef2;
+  --bg-active:    #ddf4ff;
+  --border:        #d0d7de;
+  --border-muted:  #eaeef2;
+
+  --text-primary:   #1f2328;
+  --text-secondary: #656d76;
+  --text-muted:     #8b949e;
+
+  --accent:        #0969da;
+  --accent-hover:  #0860ca;
+  --accent-subtle:  #ddf4ff;
+  --success:       #1a7f37;
+  --warning:       #9a6700;
+  --danger:        #cf222e;
+  --danger-hover:  #a40e26;
+
+  --tab-active-bg: #ffffff;
+  --tab-inactive-bg: #f6f8fa;
+  --tab-hover-bg:  #eaeef2;
+}
+
+/* ============================================
+   Reset — Tailwind preflight covers margin/padding/box-sizing.
+   DO NOT add * { margin:0 } — it runs outside @layer and overrides utilities.
+   ============================================ */
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  overflow: hidden;
+  height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app { height: 100vh; display: flex; flex-direction: column; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* Selection */
+::selection { background: var(--accent); color: #fff; }
+
+/* Focus ring */
+input:focus-visible, button:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+/* xterm overrides */
+.xterm { padding: 8px 0 0 12px; }
+.xterm-viewport::-webkit-scrollbar { width: 5px; }
+.xterm-viewport::-webkit-scrollbar-track { background: var(--bg-base); }
+.xterm-viewport::-webkit-scrollbar-thumb { background: var(--border); }

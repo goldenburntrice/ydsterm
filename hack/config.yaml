@@ -1,0 +1,14 @@
+gfcli:
+  gen:
+    dao:
+      - link: "sqlite::@file(./data/ydsterm.db)"
+        tables: "*"
+        prefix: "ydsterm_"
+        removePrefix: "ydsterm_"
+        path: "internal/dbcore"
+        daoPath: "dao"
+        doPath: "model/do"
+        entityPath: "model/entity"
+        descriptionTag: true
+        noModelComment: true
+        group: "default"
