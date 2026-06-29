@@ -40,7 +40,7 @@ function initTerminal() {
     cursorBlink: true,
     cursorStyle: 'bar',
     fontSize: 14,
-    fontFamily: '"JetBrains Mono", "Cascadia Code", Consolas, monospace',
+    fontFamily: '"JetBrains Mono", "Cascadia Code", "Fira Code", Consolas, "DejaVu Sans Mono", "Liberation Mono", "Noto Sans Mono", monospace',
     lineHeight: 1.4,
     allowTransparency: true,
     allowProposedApi: true,
@@ -80,7 +80,10 @@ const unwatchTheme = watch(isDark, () => {
   }
 })
 
-onMounted(() => {
+onMounted(async () => {
+  try {
+    await document.fonts.load('14px "JetBrains Mono"')
+  } catch (_) {}
   initTerminal()
 
   const onTermOutput = (payload: any) => {
