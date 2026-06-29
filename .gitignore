@@ -20,3 +20,4 @@ build/android/gen/
 .dev/**
 **.exe
 build
+frontend/bindings

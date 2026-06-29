@@ -255,7 +255,8 @@ function handleConfirmDialogPrompt(value: string) {
     <!-- Logo -->
     <div class="select-none mt-6">
       <pre class="font-mono text-[var(--accent)] text-center leading-tight mb-3"
-style="font-size: 11px; line-height: 1.15; letter-spacing: 0">██╗   ██╗██████╗ ███████╗████████╗███████╗██████╗ ███╗   ███╗
+style="font-size: 11px; line-height: 1.15; letter-spacing: 0">
+██╗   ██╗██████╗ ███████╗████████╗███████╗██████╗ ███╗   ███╗
 ╚██╗ ██╔╝██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗████╗ ████║
  ╚████╔╝ ██║  ██║███████╗   ██║   █████╗  ██████╔╝██╔████╔██║
   ╚██╔╝  ██║  ██║╚════██║   ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║
