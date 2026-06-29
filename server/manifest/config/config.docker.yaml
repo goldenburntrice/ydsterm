@@ -1,7 +1,5 @@
 server:
   address: ":7788"
-  openapiPath: "/api.json"
-  swaggerPath: "/swagger"
 
 database:
   default:
