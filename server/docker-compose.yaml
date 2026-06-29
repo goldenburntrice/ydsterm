@@ -1,0 +1,15 @@
+services:
+  ydsterm-server:
+    build: .
+    container_name: ydsterm-server
+    ports:
+      - "7788:7788"
+    volumes:
+      - ydsterm-data:/app/data
+    environment:
+      - YDSTERM_SERVER_KEY=${YDSTERM_SERVER_KEY:-}
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+
+volumes:
+  ydsterm-data:
