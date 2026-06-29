@@ -1,0 +1,18 @@
+FROM alpine:3.19
+
+RUN apk add --no-cache ca-certificates tzdata
+
+WORKDIR /app
+
+COPY ydsterm-server .
+COPY manifest/config/config.docker.yaml ./manifest/config/config.yaml
+
+RUN mkdir -p /app/data
+
+EXPOSE 7788
+
+VOLUME ["/app/data"]
+
+ENV YDSTERM_SERVER_KEY=""
+
+CMD ["./ydsterm-server"]

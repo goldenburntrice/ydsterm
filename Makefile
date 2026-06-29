@@ -40,7 +40,9 @@ docker-build:
 		echo "Example: make docker-build REGISTRY=gitea.xxx.com/namespace VERSION=v1.0.0"; \
 		exit 1; \
 	fi
-	cd server && docker build -t $(REGISTRY)/ydsterm-server:$(VERSION) .
+	cd server && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o ydsterm-server .
+	cd server && docker build -f Dockerfile.local -t $(REGISTRY)/ydsterm-server:$(VERSION) .
+	rm -f server/ydsterm-server
 	@echo "Image built: $(REGISTRY)/ydsterm-server:$(VERSION)"
 
 docker-push:
