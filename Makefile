@@ -1,4 +1,4 @@
-.PHONY: pack dev build build-linux clean tidy gen-dao server-build server-dev
+.PHONY: pack dev build build-linux clean tidy gen-dao server-build server-dev docker-build docker-push
 
 # pack embeds manifest resources into the binary with gf pack
 pack:
@@ -33,3 +33,19 @@ server-dev:
 
 server-gen-dao:
 	cd server && gf gen dao
+
+docker-build:
+	@if [ -z "$(REGISTRY)" ] || [ -z "$(VERSION)" ]; then \
+		echo "Usage: make docker-build REGISTRY=<registry/namespace> VERSION=<version>"; \
+		echo "Example: make docker-build REGISTRY=gitea.xxx.com/namespace VERSION=v1.0.0"; \
+		exit 1; \
+	fi
+	cd server && docker build -t $(REGISTRY)/ydsterm-server:$(VERSION) .
+	@echo "Image built: $(REGISTRY)/ydsterm-server:$(VERSION)"
+
+docker-push:
+	@if [ -z "$(REGISTRY)" ] || [ -z "$(VERSION)" ]; then \
+		echo "Usage: make docker-push REGISTRY=<registry/namespace> VERSION=<version>"; \
+		exit 1; \
+	fi
+	docker push $(REGISTRY)/ydsterm-server:$(VERSION)
