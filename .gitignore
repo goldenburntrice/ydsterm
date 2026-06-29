@@ -21,4 +21,3 @@ build/android/gen/
 **.exe
 build
 frontend/bindings
-packed/packed.go

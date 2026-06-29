@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=YDSterm
+Comment=A cross-platform terminal client
+Exec=/home/yaods/codes/ydsterm/bin/ydsterm
+Icon=/home/yaods/codes/ydsterm/linux/icons/ydsterm-terminal.png
+Terminal=false
+Type=Application
+Categories=System;TerminalEmulator;
+Keywords=ssh;terminal;client;
