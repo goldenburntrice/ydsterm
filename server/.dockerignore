@@ -1,0 +1,7 @@
+.git
+.gitignore
+*.md
+*.db
+data/
+bin/
+hack/
