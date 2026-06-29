@@ -41,6 +41,17 @@ const confirmDialog = ref<{
 })
 const { theme, toggleTheme } = useTheme()
 
+const toastMsg = ref('')
+const toastType = ref<'error' | 'success'>('error')
+let toastTimer: ReturnType<typeof setTimeout> | null = null
+
+function showToast(msg: string, type: 'error' | 'success' = 'error') {
+  toastMsg.value = msg
+  toastType.value = type
+  if (toastTimer) clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => { toastMsg.value = '' }, 4000)
+}
+
 onMounted(async () => {
   const [h, g, k] = await Promise.all([
     HostService.List(''),
@@ -149,7 +160,7 @@ async function connectHost(host: Host) {
     const { openTerminal } = getAppTabs()
     openTerminal(host.id, host.name, sessionId)
   } catch (e: any) {
-    alert('连接失败: ' + (e?.message ?? e))
+    showToast('连接失败: ' + (e?.message ?? e))
   }
 }
 
@@ -159,7 +170,7 @@ async function connectSFTP(host: Host) {
     const { openSFTP } = getAppTabs()
     openSFTP(host.id, host.name, sftpSessionId)
   } catch (e: any) {
-    alert('SFTP 连接失败: ' + (e?.message ?? e))
+    showToast('SFTP 连接失败: ' + (e?.message ?? e))
   }
 }
 
@@ -403,5 +414,10 @@ style="font-size: 11px; line-height: 1.15; letter-spacing: 0">
       @close="confirmDialog.visible = false"
       @confirm="confirmDialog.mode === 'prompt' ? handleConfirmDialogPrompt($event) : handleConfirmDialog()"
     />
+    <!-- Toast -->
+    <div v-if="toastMsg" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-lg text-xs shadow-lg border transition-all"
+      :class="toastType === 'error' ? 'bg-[var(--danger)]/10 border-[var(--danger)]/30 text-[var(--danger)]' : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500'">
+      {{ toastMsg }}
+    </div>
   </div>
 </template>

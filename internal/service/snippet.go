@@ -2,6 +2,7 @@ package service
 
 import (
 	"ydsterm/internal/dbcore/dao"
+	"ydsterm/internal/dbcore/model/entity"
 	"ydsterm/internal/types"
 )
 
@@ -13,6 +14,9 @@ func (s *SnippetServiceImpl) Create(input types.SnippetCreateInput) (*types.Snip
 	snip, err := dao.YdstermSnippets.Create(activeCtx(), input)
 	if err != nil {
 		return nil, err
+	}
+	if syncService != nil {
+		go syncService.PushSnippet(snippetEntityToMap(snip))
 	}
 	return entityToSnippet(snip), nil
 }
@@ -38,11 +42,21 @@ func (s *SnippetServiceImpl) Update(input types.SnippetUpdateInput) (*types.Snip
 	if err := dao.YdstermSnippets.Update(ctx, input.ID, data); err != nil {
 		return nil, err
 	}
-	return s.Get(input.ID)
+	snip, _ := dao.YdstermSnippets.Get(ctx, input.ID)
+	if syncService != nil && snip != nil {
+		go syncService.PushSnippet(snippetEntityToMap(snip))
+	}
+	return entityToSnippet(snip), nil
 }
 
 func (s *SnippetServiceImpl) Delete(id string) error {
-	return dao.YdstermSnippets.Delete(activeCtx(), id)
+	if err := dao.YdstermSnippets.Delete(activeCtx(), id); err != nil {
+		return err
+	}
+	if syncService != nil {
+		go syncService.DeleteSnippet(id)
+	}
+	return nil
 }
 
 func (s *SnippetServiceImpl) Get(id string) (*types.Snippet, error) {
@@ -70,6 +84,9 @@ func (s *SnippetServiceImpl) CreateFolder(input types.SnippetFolderCreateInput) 
 	if err != nil {
 		return nil, err
 	}
+	if syncService != nil {
+		go syncService.PushSnippetFolder(snippetFolderEntityToMap(f))
+	}
 	return entityToSnippetFolder(f), nil
 }
 
@@ -86,15 +103,21 @@ func (s *SnippetServiceImpl) UpdateFolder(input types.SnippetFolderUpdateInput) 
 	if err := dao.YdstermSnippetFolders.Update(ctx, input.ID, data); err != nil {
 		return nil, err
 	}
-	f, err := dao.YdstermSnippetFolders.Get(ctx, input.ID)
-	if err != nil {
-		return nil, err
+	f, _ := dao.YdstermSnippetFolders.Get(ctx, input.ID)
+	if syncService != nil && f != nil {
+		go syncService.PushSnippetFolder(snippetFolderEntityToMap(f))
 	}
 	return entityToSnippetFolder(f), nil
 }
 
 func (s *SnippetServiceImpl) DeleteFolder(id string) error {
-	return dao.YdstermSnippetFolders.Delete(activeCtx(), id)
+	if err := dao.YdstermSnippetFolders.Delete(activeCtx(), id); err != nil {
+		return err
+	}
+	if syncService != nil {
+		go syncService.DeleteSnippetFolder(id)
+	}
+	return nil
 }
 
 func (s *SnippetServiceImpl) ListFolders() ([]types.SnippetFolder, error) {
@@ -107,4 +130,44 @@ func (s *SnippetServiceImpl) ListFolders() ([]types.SnippetFolder, error) {
 		out[i] = *entityToSnippetFolder(&f)
 	}
 	return out, nil
+}
+
+func snippetEntityToMap(e *entity.YdstermSnippets) map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	m := map[string]interface{}{
+		"id":        e.Id,
+		"name":      e.Name,
+		"content":   e.Content,
+		"language":  e.Language,
+		"folder_id": e.FolderId,
+		"sort_order": e.SortOrder,
+	}
+	if e.CreatedAt != nil {
+		m["created_at"] = e.CreatedAt.String()
+	}
+	if e.UpdatedAt != nil {
+		m["updated_at"] = e.UpdatedAt.String()
+	}
+	return m
+}
+
+func snippetFolderEntityToMap(e *entity.YdstermSnippetFolders) map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	m := map[string]interface{}{
+		"id":         e.Id,
+		"name":       e.Name,
+		"parent_id":  e.ParentId,
+		"sort_order": e.SortOrder,
+	}
+	if e.CreatedAt != nil {
+		m["created_at"] = e.CreatedAt.String()
+	}
+	if e.UpdatedAt != nil {
+		m["updated_at"] = e.UpdatedAt.String()
+	}
+	return m
 }

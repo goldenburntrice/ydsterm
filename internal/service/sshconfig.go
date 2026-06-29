@@ -30,9 +30,13 @@ func buildSSHConfig(host *entity.YdstermHosts) (*ssh.ClientConfig, error) {
 		if host.KeyId == "" {
 			return nil, fmt.Errorf("no key selected")
 		}
-		key, err := dao.YdstermKeys.Get(nil, host.KeyId)
+		ctx := activeCtx()
+		key, err := dao.YdstermKeys.Get(ctx, host.KeyId)
 		if err != nil {
 			return nil, fmt.Errorf("key not found: %w", err)
+		}
+		if key == nil {
+			return nil, fmt.Errorf("key not found: %s", host.KeyId)
 		}
 		pem, err := crypto.Decrypt(key.PrivateKeyEnc)
 		if err != nil {

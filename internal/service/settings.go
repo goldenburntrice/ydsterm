@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"time"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"ydsterm/internal/dbcore/dao"
 	"ydsterm/internal/types"
 )
@@ -52,10 +54,10 @@ func (s *SettingsServiceImpl) VerifyUser(serverAddr, serverKey, username, passwo
 		return nil, err
 	}
 
-	if resp.StatusCode == http.StatusUnauthorized {
+	if resp.StatusCode == 401 {
 		return nil, fmt.Errorf("密码错误")
 	}
-	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+	if resp.StatusCode != 200 && resp.StatusCode != 201 {
 		return nil, fmt.Errorf("服务器错误: %s", string(respBody))
 	}
 
@@ -63,6 +65,12 @@ func (s *SettingsServiceImpl) VerifyUser(serverAddr, serverKey, username, passwo
 	if err := json.Unmarshal(respBody, &result); err != nil {
 		return nil, err
 	}
-	result.Created = resp.StatusCode == http.StatusCreated
+	result.Created = resp.StatusCode == 201
+	result.PasswordHash = hashPassword(password)
 	return &result, nil
+}
+
+func hashPassword(password string) string {
+	hash, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(hash)
 }

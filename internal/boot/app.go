@@ -12,6 +12,7 @@ type App struct {
 	SFTPService        *service.SFTPServiceImpl
 	SettingsService    *service.SettingsServiceImpl
 	UserService        *service.UserServiceImpl
+	SyncService        *service.SyncServiceImpl
 }
 
 func NewApp() *App {
@@ -23,5 +24,6 @@ func NewApp() *App {
 		SFTPService:        service.NewSFTPService(),
 		SettingsService:    service.NewSettingsService(),
 		UserService:        service.NewUserService(),
+		SyncService:        service.NewSyncService(),
 	}
 }

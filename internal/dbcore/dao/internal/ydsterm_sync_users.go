@@ -21,22 +21,24 @@ type YdstermSyncUsersDao struct {
 
 // YdstermSyncUsersColumns defines and stores column names for the table ydsterm_sync_users.
 type YdstermSyncUsersColumns struct {
-	Id         string //
-	Username   string //
-	IsActive   string //
-	LastSyncAt string //
-	CreatedAt  string //
-	UpdatedAt  string //
+	Id           string //
+	Username     string //
+	PasswordHash string //
+	IsActive     string //
+	LastSyncAt   string //
+	CreatedAt    string //
+	UpdatedAt    string //
 }
 
 // ydstermSyncUsersColumns holds the columns for the table ydsterm_sync_users.
 var ydstermSyncUsersColumns = YdstermSyncUsersColumns{
-	Id:         "id",
-	Username:   "username",
-	IsActive:   "is_active",
-	LastSyncAt: "last_sync_at",
-	CreatedAt:  "created_at",
-	UpdatedAt:  "updated_at",
+	Id:           "id",
+	Username:     "username",
+	PasswordHash: "password_hash",
+	IsActive:     "is_active",
+	LastSyncAt:   "last_sync_at",
+	CreatedAt:    "created_at",
+	UpdatedAt:    "updated_at",
 }
 
 // NewYdstermSyncUsersDao creates and returns a new DAO object for table data access.

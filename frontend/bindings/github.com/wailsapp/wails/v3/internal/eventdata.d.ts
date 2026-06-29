@@ -13,6 +13,7 @@ declare module "@wailsio/runtime" {
     namespace Events {
         interface CustomEvents {
             "sftp-transfer-progress": service$0.SftpTransferPayload;
+            "sync-progress": service$0.SyncProgressPayload;
             "term-disconnected": service$0.TermDisconnectedPayload;
             "term-output": service$0.TermOutputPayload;
         }

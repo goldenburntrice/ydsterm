@@ -9,13 +9,18 @@ import { getAppTabs } from './composables/useAppTabs'
 
 const { tabs, activeTabId } = getAppTabs()
 const showSettings = ref(false)
+const homeRefreshKey = ref(0)
+
+function handleRefresh() {
+  homeRefreshKey.value++
+}
 </script>
 
 <template>
   <div class="flex flex-col h-screen w-screen bg-[var(--bg-base)]">
     <TabBar @open-settings="showSettings = true" />
     <main class="flex-1 overflow-hidden">
-      <HomeView v-show="activeTabId === 'home'" />
+      <HomeView v-show="activeTabId === 'home'" :key="homeRefreshKey" />
       <template v-for="tab in tabs" :key="tab.id">
         <TerminalView v-if="tab.type === 'terminal'"
           :tab-id="tab.id" :session-id="tab.sessionId || ''"
@@ -27,6 +32,6 @@ const showSettings = ref(false)
           :active="activeTabId === tab.id" />
       </template>
     </main>
-    <SettingsPanel v-if="showSettings" @close="showSettings = false" />
+    <SettingsPanel v-if="showSettings" @close="showSettings = false" @refresh="handleRefresh" />
   </div>
 </template>

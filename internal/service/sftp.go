@@ -67,8 +67,12 @@ func NewSFTPService() *SFTPServiceImpl {
 
 func (s *SFTPServiceImpl) Connect(hostID string) (sessionID string, err error) {
 	log.Printf("[sftp] Connect(%s)", hostID)
-	host, err := dao.YdstermHosts.Get(nil, hostID)
+	ctx := activeCtx()
+	host, err := dao.YdstermHosts.Get(ctx, hostID)
 	if err != nil {
+		return "", fmt.Errorf("host not found: %s", hostID)
+	}
+	if host == nil {
 		return "", fmt.Errorf("host not found: %s", hostID)
 	}
 

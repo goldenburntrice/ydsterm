@@ -59,10 +59,17 @@ func (s *UserServiceImpl) SwitchUser(userID string) error {
 		dbcore.SetActiveUser(newUser.Username)
 		log.Printf("switched to user: %s", newUser.Username)
 	}
+	if syncService != nil && newUser != nil && newUser.Username != "LOCALUSER" {
+		go func() {
+			if err := syncService.PullAll(); err != nil {
+				log.Printf("sync pull after switch: %v", err)
+			}
+		}()
+	}
 	return nil
 }
 
-func (s *UserServiceImpl) RegisterVerifiedUser(username string, serverUserID string) (*types.SyncUser, error) {
+func (s *UserServiceImpl) RegisterVerifiedUser(username string, passwordHash string) (*types.SyncUser, error) {
 	ctx := context.Background()
 	existing, err := dao.YdstermSyncUsers.GetByUsername(ctx, username)
 	if err != nil {
@@ -72,10 +79,20 @@ func (s *UserServiceImpl) RegisterVerifiedUser(username string, serverUserID str
 		if err := dao.YdstermSyncUsers.SetActive(ctx, existing.Id); err != nil {
 			return nil, err
 		}
+		if passwordHash != "" {
+			_ = dao.YdstermSyncUsers.UpdatePasswordHash(ctx, existing.Id, passwordHash)
+		}
 		dbcore.SetActiveUser(username)
+		if syncService != nil && username != "LOCALUSER" {
+			go func() {
+				if err := syncService.PullAll(); err != nil {
+					log.Printf("sync pull after verify: %v", err)
+				}
+			}()
+		}
 		return syncUserEntityToTypes(existing), nil
 	}
-	u, err := dao.YdstermSyncUsers.Create(ctx, username)
+	u, err := dao.YdstermSyncUsers.Create(ctx, username, passwordHash)
 	if err != nil {
 		return nil, err
 	}
@@ -83,6 +100,13 @@ func (s *UserServiceImpl) RegisterVerifiedUser(username string, serverUserID str
 		return nil, err
 	}
 	dbcore.SetActiveUser(username)
+	if syncService != nil && username != "LOCALUSER" {
+		go func() {
+			if err := syncService.PullAll(); err != nil {
+				log.Printf("sync pull after verify: %v", err)
+			}
+		}()
+	}
 	return syncUserEntityToTypes(u), nil
 }
 
@@ -107,7 +131,7 @@ func (s *UserServiceImpl) InitActiveUser() error {
 		dbcore.SetActiveUser(users[0].Username)
 		return nil
 	}
-	newUser, err := dao.YdstermSyncUsers.Create(ctx, "LOCALUSER")
+	newUser, err := dao.YdstermSyncUsers.Create(ctx, "LOCALUSER", "")
 	if err != nil {
 		return err
 	}

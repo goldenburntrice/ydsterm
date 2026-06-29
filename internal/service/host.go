@@ -5,6 +5,7 @@ import (
 
 	"ydsterm/internal/dbcore"
 	"ydsterm/internal/dbcore/dao"
+	"ydsterm/internal/dbcore/model/entity"
 	"ydsterm/internal/crypto"
 	"ydsterm/internal/types"
 )
@@ -16,6 +17,12 @@ func activeCtx() context.Context {
 type HostServiceImpl struct{}
 
 func NewHostService() *HostServiceImpl { return &HostServiceImpl{} }
+
+var syncService *SyncServiceImpl
+
+func SetSyncService(s *SyncServiceImpl) {
+	syncService = s
+}
 
 func (s *HostServiceImpl) Create(input types.HostCreateInput) (*types.Host, error) {
 	ctx := activeCtx()
@@ -37,6 +44,9 @@ func (s *HostServiceImpl) Create(input types.HostCreateInput) (*types.Host, erro
 			dao.YdstermHosts.Columns().PasswordEnc: passwordEnc,
 		})
 		host.PasswordEnc = passwordEnc
+	}
+	if syncService != nil {
+		go syncService.PushHost(entityToMap(host))
 	}
 	return entityToHost(host), nil
 }
@@ -81,11 +91,21 @@ func (s *HostServiceImpl) Update(input types.HostUpdateInput) (*types.Host, erro
 	if err := dao.YdstermHosts.Update(ctx, input.ID, data); err != nil {
 		return nil, err
 	}
-	return s.Get(input.ID)
+	host, _ := dao.YdstermHosts.Get(ctx, input.ID)
+	if syncService != nil && host != nil {
+		go syncService.PushHost(entityToMap(host))
+	}
+	return entityToHost(host), nil
 }
 
 func (s *HostServiceImpl) Delete(id string) error {
-	return dao.YdstermHosts.Delete(activeCtx(), id)
+	if err := dao.YdstermHosts.Delete(activeCtx(), id); err != nil {
+		return err
+	}
+	if syncService != nil {
+		go syncService.DeleteHost(id)
+	}
+	return nil
 }
 
 func (s *HostServiceImpl) Get(id string) (*types.Host, error) {
@@ -135,6 +155,9 @@ func (s *HostServiceImpl) CreateKey(input types.KeyCreateInput) (*types.Key, err
 	_ = dao.YdstermKeys.Update(ctx, key.Id, upd)
 	key.PrivateKeyEnc = privEnc
 	key.PassphraseEnc = passEnc
+	if syncService != nil {
+		go syncService.PushKey(keyEntityToMap(key))
+	}
 	return entityToKey(key), nil
 }
 
@@ -167,11 +190,21 @@ func (s *HostServiceImpl) UpdateKey(input types.KeyUpdateInput) (*types.Key, err
 	if err := dao.YdstermKeys.Update(ctx, input.ID, data); err != nil {
 		return nil, err
 	}
-	return s.GetKey(input.ID)
+	key, _ := dao.YdstermKeys.Get(ctx, input.ID)
+	if syncService != nil && key != nil {
+		go syncService.PushKey(keyEntityToMap(key))
+	}
+	return entityToKey(key), nil
 }
 
 func (s *HostServiceImpl) DeleteKey(id string) error {
-	return dao.YdstermKeys.Delete(activeCtx(), id)
+	if err := dao.YdstermKeys.Delete(activeCtx(), id); err != nil {
+		return err
+	}
+	if syncService != nil {
+		go syncService.DeleteKey(id)
+	}
+	return nil
 }
 
 func (s *HostServiceImpl) GetKey(id string) (*types.Key, error) {
@@ -199,6 +232,9 @@ func (s *HostServiceImpl) CreateGroup(input types.HostGroupCreateInput) (*types.
 	if err != nil {
 		return nil, err
 	}
+	if syncService != nil {
+		go syncService.PushHostGroup(groupEntityToMap(g))
+	}
 	return entityToHostGroup(g), nil
 }
 
@@ -215,15 +251,21 @@ func (s *HostServiceImpl) UpdateGroup(input types.HostGroupUpdateInput) (*types.
 	if err := dao.YdstermHostGroups.Update(ctx, input.ID, data); err != nil {
 		return nil, err
 	}
-	g, err := dao.YdstermHostGroups.Get(ctx, input.ID)
-	if err != nil {
-		return nil, err
+	g, _ := dao.YdstermHostGroups.Get(ctx, input.ID)
+	if syncService != nil && g != nil {
+		go syncService.PushHostGroup(groupEntityToMap(g))
 	}
 	return entityToHostGroup(g), nil
 }
 
 func (s *HostServiceImpl) DeleteGroup(id string) error {
-	return dao.YdstermHostGroups.Delete(activeCtx(), id)
+	if err := dao.YdstermHostGroups.Delete(activeCtx(), id); err != nil {
+		return err
+	}
+	if syncService != nil {
+		go syncService.DeleteHostGroup(id)
+	}
+	return nil
 }
 
 func (s *HostServiceImpl) ListGroups() ([]types.HostGroup, error) {
@@ -236,4 +278,68 @@ func (s *HostServiceImpl) ListGroups() ([]types.HostGroup, error) {
 		out[i] = *entityToHostGroup(&g)
 	}
 	return out, nil
+}
+
+func entityToMap(e *entity.YdstermHosts) map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	m := map[string]interface{}{
+		"id":           e.Id,
+		"name":         e.Name,
+		"hostname":     e.Hostname,
+		"port":         e.Port,
+		"username":     e.Username,
+		"auth_method":  e.AuthMethod,
+		"password_enc": e.PasswordEnc,
+		"key_id":       e.KeyId,
+		"group_id":     e.GroupId,
+		"color":        e.Color,
+	}
+	if e.CreatedAt != nil {
+		m["created_at"] = e.CreatedAt.String()
+	}
+	if e.UpdatedAt != nil {
+		m["updated_at"] = e.UpdatedAt.String()
+	}
+	return m
+}
+
+func keyEntityToMap(e *entity.YdstermKeys) map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	m := map[string]interface{}{
+		"id":              e.Id,
+		"name":            e.Name,
+		"private_key_enc": e.PrivateKeyEnc,
+		"public_key":      e.PublicKey,
+		"passphrase_enc":  e.PassphraseEnc,
+	}
+	if e.CreatedAt != nil {
+		m["created_at"] = e.CreatedAt.String()
+	}
+	if e.UpdatedAt != nil {
+		m["updated_at"] = e.UpdatedAt.String()
+	}
+	return m
+}
+
+func groupEntityToMap(e *entity.YdstermHostGroups) map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	m := map[string]interface{}{
+		"id":         e.Id,
+		"name":       e.Name,
+		"parent_id":  e.ParentId,
+		"sort_order": e.SortOrder,
+	}
+	if e.CreatedAt != nil {
+		m["created_at"] = e.CreatedAt.String()
+	}
+	if e.UpdatedAt != nil {
+		m["updated_at"] = e.UpdatedAt.String()
+	}
+	return m
 }

@@ -49,7 +49,7 @@ func main() {
 	if err := appInstance.UserService.InitActiveUser(); err != nil {
 		log.Printf("init active user: %v", err)
 	}
-	log.Println("Services registered (Host, Snippet, PortForward, Terminal, Settings, User)")
+	log.Println("Services registered (Host, Snippet, PortForward, Terminal, Settings, User, Sync)")
 
 	app := application.New(application.Options{
 		Name:        "YDSterm",
@@ -62,6 +62,7 @@ func main() {
 			application.NewService(appInstance.SFTPService),
 			application.NewService(appInstance.SettingsService),
 			application.NewService(appInstance.UserService),
+			application.NewService(appInstance.SyncService),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),

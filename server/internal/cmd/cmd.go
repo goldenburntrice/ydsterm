@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"log"
+	"os"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -12,6 +13,7 @@ import (
 
 	"ydsterm-server/internal/consts"
 	"ydsterm-server/internal/controller"
+	"ydsterm-server/internal/middleware"
 )
 
 var (
@@ -28,14 +30,14 @@ var (
 			if err != nil {
 				log.Fatalf("ensure server key: %v", err)
 			}
-			log.Printf("Server key: %s", serverKey)
+			log.Printf("Server Key: %s", serverKey)
 
 			s := g.Server()
 			s.Group("/", func(group *ghttp.RouterGroup) {
-				group.Middleware(serverKeyAuthMiddleware(serverKey))
 				group.POST("/api/auth/verify", controller.Auth.Verify)
-				group.GET("/api/sync/pull", controller.Sync.Pull)
-				group.POST("/api/sync/push", controller.Sync.Push)
+				group.POST("/sync2cloud/{module}", middleware.SyncAuthMiddleware(serverKey), controller.Sync.Push)
+				group.DELETE("/sync2cloud/{module}", middleware.SyncAuthMiddleware(serverKey), controller.Sync.Delete)
+				group.GET("/pull2cli/{module}", controller.Sync.Pull)
 			})
 
 			s.Run()
@@ -149,10 +151,12 @@ func initDatabase(ctx context.Context) error {
 }
 
 func ensureServerKey(ctx context.Context) (string, error) {
-	cfgKey := g.Cfg().MustGet(ctx, "server-config.serverKey", "").String()
-	if cfgKey != "" {
-		_, err := g.DB().Exec(ctx, "INSERT OR REPLACE INTO server_config (key, value) VALUES ('server_key', ?)", cfgKey)
-		return cfgKey, err
+	if envKey := os.Getenv("YDSTERM_SERVER_KEY"); envKey != "" {
+		_, err := g.DB().Exec(ctx, "INSERT OR REPLACE INTO server_config (key, value) VALUES ('server_key', ?)", envKey)
+		if err != nil {
+			return "", err
+		}
+		return envKey, nil
 	}
 
 	record, err := g.DB().Model("server_config").Ctx(ctx).Where("key", "server_key").One()
@@ -171,21 +175,6 @@ func ensureServerKey(ctx context.Context) (string, error) {
 
 	_, err = g.DB().Exec(ctx, "INSERT INTO server_config (key, value) VALUES ('server_key', ?)", key)
 	return key, err
-}
-
-func serverKeyAuthMiddleware(expectedKey string) func(r *ghttp.Request) {
-	return func(r *ghttp.Request) {
-		key := r.Header.Get("X-Server-Key")
-		if key == "" {
-			r.Response.WriteJsonExit(g.Map{"error": "missing X-Server-Key header"})
-			return
-		}
-		if key != expectedKey {
-			r.Response.WriteStatusExit(401, g.Map{"error": "invalid server key"})
-			return
-		}
-		r.Middleware.Next()
-	}
 }
 
 func init() {

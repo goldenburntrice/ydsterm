@@ -19,12 +19,13 @@ type ydstermSyncUsersDao struct {
 var YdstermSyncUsers = ydstermSyncUsersDao{internal.NewYdstermSyncUsersDao()}
 
 type SyncUserEntity struct {
-	Id         string      `json:"id"          orm:"id"           description:""`
-	Username   string      `json:"username"    orm:"username"     description:""`
-	IsActive   int         `json:"isActive"    orm:"is_active"    description:""`
-	LastSyncAt *gtime.Time `json:"lastSyncAt"  orm:"last_sync_at" description:""`
-	CreatedAt  *gtime.Time `json:"createdAt"   orm:"created_at"   description:""`
-	UpdatedAt  *gtime.Time `json:"updatedAt"   orm:"updated_at"   description:""`
+	Id           string      `json:"id"           orm:"id"            description:""`
+	Username     string      `json:"username"     orm:"username"      description:""`
+	PasswordHash string      `json:"passwordHash" orm:"password_hash" description:""`
+	IsActive     int         `json:"isActive"     orm:"is_active"     description:""`
+	LastSyncAt   *gtime.Time `json:"lastSyncAt"   orm:"last_sync_at"  description:""`
+	CreatedAt    *gtime.Time `json:"createdAt"    orm:"created_at"    description:""`
+	UpdatedAt    *gtime.Time `json:"updatedAt"    orm:"updated_at"    description:""`
 }
 
 func (e *SyncUserEntity) String() string {
@@ -60,15 +61,16 @@ func (d *ydstermSyncUsersDao) List(ctx context.Context) ([]SyncUserEntity, error
 	return users, nil
 }
 
-func (d *ydstermSyncUsersDao) Create(ctx context.Context, username string) (*SyncUserEntity, error) {
+func (d *ydstermSyncUsersDao) Create(ctx context.Context, username, passwordHash string) (*SyncUserEntity, error) {
 	id := types.NewID()
 	now := gtime.Now()
 	_, err := d.Ctx(ctx).Data(g.Map{
-		d.Columns().Id:        id,
-		d.Columns().Username:  username,
-		d.Columns().IsActive:  0,
-		d.Columns().CreatedAt: now,
-		d.Columns().UpdatedAt: now,
+		d.Columns().Id:            id,
+		d.Columns().Username:      username,
+		d.Columns().PasswordHash:  passwordHash,
+		d.Columns().IsActive:      0,
+		d.Columns().CreatedAt:     now,
+		d.Columns().UpdatedAt:     now,
 	}).Insert()
 	if err != nil {
 		return nil, err
@@ -88,6 +90,14 @@ func (d *ydstermSyncUsersDao) UpdateLastSyncAt(ctx context.Context, id string, t
 	_, err := d.Ctx(ctx).WherePri(id).Update(g.Map{
 		d.Columns().LastSyncAt: t,
 		d.Columns().UpdatedAt:  gtime.Now(),
+	})
+	return err
+}
+
+func (d *ydstermSyncUsersDao) UpdatePasswordHash(ctx context.Context, id, passwordHash string) error {
+	_, err := d.Ctx(ctx).WherePri(id).Update(g.Map{
+		d.Columns().PasswordHash: passwordHash,
+		d.Columns().UpdatedAt:    gtime.Now(),
 	})
 	return err
 }

@@ -56,9 +56,13 @@ func NewTerminalService() *TerminalServiceImpl {
 func (s *TerminalServiceImpl) Connect(hostID string) (sessionID string, err error) {
 	log.Printf("[term] Connect(%s) called", hostID)
 
-	host, err := dao.YdstermHosts.Get(nil, hostID)
+	ctx := activeCtx()
+	host, err := dao.YdstermHosts.Get(ctx, hostID)
 	if err != nil {
 		log.Printf("[term] host lookup failed: %v", err)
+		return "", fmt.Errorf("host not found: %s", hostID)
+	}
+	if host == nil {
 		return "", fmt.Errorf("host not found: %s", hostID)
 	}
 	log.Printf("[term] host: %s (%s@%s:%d) auth=%s",
