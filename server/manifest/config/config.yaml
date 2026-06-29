@@ -1,0 +1,13 @@
+server:
+  address: ":8080"
+  openapiPath: "/api.json"
+  swaggerPath: "/swagger"
+
+database:
+  default:
+    link: "sqlite::@file(./ydsterm-server.db)"
+    debug: true
+
+# 自定义配置
+server-config:
+  serverKey: "" # 留空则自动生成

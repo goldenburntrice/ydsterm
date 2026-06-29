@@ -10,6 +10,8 @@ type App struct {
 	PortForwardService *service.PortForwardServiceImpl
 	TerminalService    *service.TerminalServiceImpl
 	SFTPService        *service.SFTPServiceImpl
+	SettingsService    *service.SettingsServiceImpl
+	UserService        *service.UserServiceImpl
 }
 
 func NewApp() *App {
@@ -19,5 +21,7 @@ func NewApp() *App {
 		PortForwardService: service.NewPortForwardService(),
 		TerminalService:    service.NewTerminalService(),
 		SFTPService:        service.NewSFTPService(),
+		SettingsService:    service.NewSettingsService(),
+		UserService:        service.NewUserService(),
 	}
 }

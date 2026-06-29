@@ -1,17 +1,19 @@
 <script setup lang="ts">
-import { getAppTabs } from './composables/useAppTabs'
+import { ref } from 'vue'
 import TabBar from './components/TabBar.vue'
 import HomeView from './views/HomeView.vue'
 import TerminalView from './views/TerminalView.vue'
 import SFTPView from './views/SFTPView.vue'
+import SettingsPanel from './components/SettingsPanel.vue'
+import { getAppTabs } from './composables/useAppTabs'
 
 const { tabs, activeTabId } = getAppTabs()
+const showSettings = ref(false)
 </script>
 
 <template>
-  <!-- @contextmenu.prevent removed temporarily for debugging -- right-click to inspect -->
   <div class="flex flex-col h-screen w-screen bg-[var(--bg-base)]">
-    <TabBar />
+    <TabBar @open-settings="showSettings = true" />
     <main class="flex-1 overflow-hidden">
       <HomeView v-show="activeTabId === 'home'" />
       <template v-for="tab in tabs" :key="tab.id">
@@ -25,5 +27,6 @@ const { tabs, activeTabId } = getAppTabs()
           :active="activeTabId === tab.id" />
       </template>
     </main>
+    <SettingsPanel v-if="showSettings" @close="showSettings = false" />
   </div>
 </template>

@@ -28,6 +28,7 @@ type YdstermKeysColumns struct {
 	PassphraseEnc string //
 	CreatedAt     string //
 	UpdatedAt     string //
+	SyncUser      string //
 }
 
 // ydstermKeysColumns holds the columns for the table ydsterm_keys.
@@ -39,6 +40,7 @@ var ydstermKeysColumns = YdstermKeysColumns{
 	PassphraseEnc: "passphrase_enc",
 	CreatedAt:     "created_at",
 	UpdatedAt:     "updated_at",
+	SyncUser:      "sync_user",
 }
 
 // NewYdstermKeysDao creates and returns a new DAO object for table data access.

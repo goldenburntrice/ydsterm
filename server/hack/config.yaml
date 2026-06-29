@@ -1,0 +1,8 @@
+gfcli:
+  gen:
+    dao:
+      - link: "sqlite::@file(./ydsterm-server.db)"
+        tables: "sync_users,sync_hosts,sync_host_groups,sync_keys,sync_snippets,sync_snippet_folders,sync_port_forwards"
+        path: internal
+        modelDir: model/entity
+        modelDoDir: model/do

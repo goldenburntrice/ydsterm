@@ -1,8 +1,6 @@
 package service
 
 import (
-	"context"
-
 	"ydsterm/internal/dbcore/dao"
 	"ydsterm/internal/types"
 )
@@ -12,7 +10,7 @@ type PortForwardServiceImpl struct{}
 func NewPortForwardService() *PortForwardServiceImpl { return &PortForwardServiceImpl{} }
 
 func (s *PortForwardServiceImpl) Create(input types.PortForwardCreateInput) (*types.PortForward, error) {
-	pf, err := dao.YdstermPortForwards.Create(context.Background(), input)
+	pf, err := dao.YdstermPortForwards.Create(activeCtx(), input)
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +18,7 @@ func (s *PortForwardServiceImpl) Create(input types.PortForwardCreateInput) (*ty
 }
 
 func (s *PortForwardServiceImpl) Update(input types.PortForwardUpdateInput) (*types.PortForward, error) {
-	ctx := context.Background()
+	ctx := activeCtx()
 	data := make(map[string]interface{})
 	cols := dao.YdstermPortForwards.Columns()
 
@@ -59,11 +57,11 @@ func (s *PortForwardServiceImpl) Update(input types.PortForwardUpdateInput) (*ty
 }
 
 func (s *PortForwardServiceImpl) Delete(id string) error {
-	return dao.YdstermPortForwards.Delete(context.Background(), id)
+	return dao.YdstermPortForwards.Delete(activeCtx(), id)
 }
 
 func (s *PortForwardServiceImpl) Get(id string) (*types.PortForward, error) {
-	pf, err := dao.YdstermPortForwards.Get(context.Background(), id)
+	pf, err := dao.YdstermPortForwards.Get(activeCtx(), id)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +69,7 @@ func (s *PortForwardServiceImpl) Get(id string) (*types.PortForward, error) {
 }
 
 func (s *PortForwardServiceImpl) List(hostID string) ([]types.PortForward, error) {
-	pfs, err := dao.YdstermPortForwards.List(context.Background(), hostID)
+	pfs, err := dao.YdstermPortForwards.List(activeCtx(), hostID)
 	if err != nil {
 		return nil, err
 	}
@@ -83,5 +81,5 @@ func (s *PortForwardServiceImpl) List(hostID string) ([]types.PortForward, error
 }
 
 func (s *PortForwardServiceImpl) Toggle(id string, enabled bool) error {
-	return dao.YdstermPortForwards.Toggle(context.Background(), id, enabled)
+	return dao.YdstermPortForwards.Toggle(activeCtx(), id, enabled)
 }

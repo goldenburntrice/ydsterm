@@ -1,4 +1,4 @@
-.PHONY: pack dev build build-linux clean tidy gen-dao
+.PHONY: pack dev build build-linux clean tidy gen-dao server-build server-dev
 
 # pack embeds manifest resources into the binary with gf pack
 pack:
@@ -24,3 +24,12 @@ clean:
 tidy:
 	go mod tidy
 	cd frontend && npm install
+
+server-build:
+	cd server && go mod tidy && go build -o ../bin/ydsterm-server .
+
+server-dev:
+	cd server && go run .
+
+server-gen-dao:
+	cd server && gf gen dao

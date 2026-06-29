@@ -20,4 +20,5 @@ type YdstermSnippets struct {
 	SortOrder any         //
 	CreatedAt *gtime.Time //
 	UpdatedAt *gtime.Time //
+	SyncUser  any         //
 }

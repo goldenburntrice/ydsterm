@@ -19,4 +19,5 @@ type YdstermKeys struct {
 	PassphraseEnc any         //
 	CreatedAt     *gtime.Time //
 	UpdatedAt     *gtime.Time //
+	SyncUser      any         //
 }

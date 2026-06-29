@@ -34,6 +34,7 @@ type YdstermPortForwardsColumns struct {
 	Enabled      string //
 	CreatedAt    string //
 	UpdatedAt    string //
+	SyncUser     string //
 }
 
 // ydstermPortForwardsColumns holds the columns for the table ydsterm_port_forwards.
@@ -51,6 +52,7 @@ var ydstermPortForwardsColumns = YdstermPortForwardsColumns{
 	Enabled:      "enabled",
 	CreatedAt:    "created_at",
 	UpdatedAt:    "updated_at",
+	SyncUser:     "sync_user",
 }
 
 // NewYdstermPortForwardsDao creates and returns a new DAO object for table data access.

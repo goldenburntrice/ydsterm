@@ -27,6 +27,7 @@ type YdstermSnippetFoldersColumns struct {
 	SortOrder string //
 	CreatedAt string //
 	UpdatedAt string //
+	SyncUser  string //
 }
 
 // ydstermSnippetFoldersColumns holds the columns for the table ydsterm_snippet_folders.
@@ -37,6 +38,7 @@ var ydstermSnippetFoldersColumns = YdstermSnippetFoldersColumns{
 	SortOrder: "sort_order",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
+	SyncUser:  "sync_user",
 }
 
 // NewYdstermSnippetFoldersDao creates and returns a new DAO object for table data access.

@@ -39,3 +39,17 @@ type IPortForwardService interface {
 	List(hostID string) ([]types.PortForward, error)
 	Toggle(id string, enabled bool) error
 }
+
+type ISettingsService interface {
+	Get(key string) (string, error)
+	Set(key, value string) error
+	VerifyUser(serverAddr, serverKey, username, password string) (*types.VerifyResponse, error)
+}
+
+type IUserService interface {
+	GetCurrentUser() (*types.SyncUser, error)
+	ListUsers() ([]types.SyncUser, error)
+	SwitchUser(userID string) error
+	RegisterVerifiedUser(username string, serverUserID string) (*types.SyncUser, error)
+	InitActiveUser() error
+}

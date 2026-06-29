@@ -18,4 +18,5 @@ type YdstermSnippetFolders struct {
 	SortOrder any         //
 	CreatedAt *gtime.Time //
 	UpdatedAt *gtime.Time //
+	SyncUser  any         //
 }

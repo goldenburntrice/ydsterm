@@ -34,6 +34,7 @@ type YdstermHostsColumns struct {
 	CreatedAt   string //
 	UpdatedAt   string //
 	DeletedAt   string //
+	SyncUser    string //
 }
 
 // ydstermHostsColumns holds the columns for the table ydsterm_hosts.
@@ -51,6 +52,7 @@ var ydstermHostsColumns = YdstermHostsColumns{
 	CreatedAt:   "created_at",
 	UpdatedAt:   "updated_at",
 	DeletedAt:   "deleted_at",
+	SyncUser:    "sync_user",
 }
 
 // NewYdstermHostsDao creates and returns a new DAO object for table data access.

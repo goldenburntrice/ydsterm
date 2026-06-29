@@ -25,4 +25,5 @@ type YdstermPortForwards struct {
 	Enabled      any         //
 	CreatedAt    *gtime.Time //
 	UpdatedAt    *gtime.Time //
+	SyncUser     any         //
 }

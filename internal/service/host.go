@@ -3,17 +3,22 @@ package service
 import (
 	"context"
 
-	"ydsterm/internal/crypto"
+	"ydsterm/internal/dbcore"
 	"ydsterm/internal/dbcore/dao"
+	"ydsterm/internal/crypto"
 	"ydsterm/internal/types"
 )
+
+func activeCtx() context.Context {
+	return dbcore.WithActiveUser(context.Background())
+}
 
 type HostServiceImpl struct{}
 
 func NewHostService() *HostServiceImpl { return &HostServiceImpl{} }
 
 func (s *HostServiceImpl) Create(input types.HostCreateInput) (*types.Host, error) {
-	ctx := context.Background()
+	ctx := activeCtx()
 	passwordEnc := ""
 	if input.Password != "" {
 		var err error
@@ -22,7 +27,7 @@ func (s *HostServiceImpl) Create(input types.HostCreateInput) (*types.Host, erro
 			return nil, err
 		}
 	}
-	input.Password = "" // clear plaintext
+	input.Password = ""
 	host, err := dao.YdstermHosts.Create(ctx, input)
 	if err != nil {
 		return nil, err
@@ -37,7 +42,7 @@ func (s *HostServiceImpl) Create(input types.HostCreateInput) (*types.Host, erro
 }
 
 func (s *HostServiceImpl) Update(input types.HostUpdateInput) (*types.Host, error) {
-	ctx := context.Background()
+	ctx := activeCtx()
 	data := make(map[string]interface{})
 	cols := dao.YdstermHosts.Columns()
 
@@ -80,11 +85,11 @@ func (s *HostServiceImpl) Update(input types.HostUpdateInput) (*types.Host, erro
 }
 
 func (s *HostServiceImpl) Delete(id string) error {
-	return dao.YdstermHosts.Delete(context.Background(), id)
+	return dao.YdstermHosts.Delete(activeCtx(), id)
 }
 
 func (s *HostServiceImpl) Get(id string) (*types.Host, error) {
-	host, err := dao.YdstermHosts.Get(context.Background(), id)
+	host, err := dao.YdstermHosts.Get(activeCtx(), id)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +97,7 @@ func (s *HostServiceImpl) Get(id string) (*types.Host, error) {
 }
 
 func (s *HostServiceImpl) List(groupID string) ([]types.Host, error) {
-	hosts, err := dao.YdstermHosts.List(context.Background(), groupID)
+	hosts, err := dao.YdstermHosts.List(activeCtx(), groupID)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +109,7 @@ func (s *HostServiceImpl) List(groupID string) ([]types.Host, error) {
 }
 
 func (s *HostServiceImpl) CreateKey(input types.KeyCreateInput) (*types.Key, error) {
-	ctx := context.Background()
+	ctx := activeCtx()
 	privEnc, err := crypto.Encrypt(input.PrivateKey)
 	if err != nil {
 		return nil, err
@@ -134,7 +139,7 @@ func (s *HostServiceImpl) CreateKey(input types.KeyCreateInput) (*types.Key, err
 }
 
 func (s *HostServiceImpl) UpdateKey(input types.KeyUpdateInput) (*types.Key, error) {
-	ctx := context.Background()
+	ctx := activeCtx()
 	data := make(map[string]interface{})
 	cols := dao.YdstermKeys.Columns()
 
@@ -166,11 +171,11 @@ func (s *HostServiceImpl) UpdateKey(input types.KeyUpdateInput) (*types.Key, err
 }
 
 func (s *HostServiceImpl) DeleteKey(id string) error {
-	return dao.YdstermKeys.Delete(context.Background(), id)
+	return dao.YdstermKeys.Delete(activeCtx(), id)
 }
 
 func (s *HostServiceImpl) GetKey(id string) (*types.Key, error) {
-	key, err := dao.YdstermKeys.Get(context.Background(), id)
+	key, err := dao.YdstermKeys.Get(activeCtx(), id)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +183,7 @@ func (s *HostServiceImpl) GetKey(id string) (*types.Key, error) {
 }
 
 func (s *HostServiceImpl) ListKeys() ([]types.Key, error) {
-	keys, err := dao.YdstermKeys.List(context.Background())
+	keys, err := dao.YdstermKeys.List(activeCtx())
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +195,7 @@ func (s *HostServiceImpl) ListKeys() ([]types.Key, error) {
 }
 
 func (s *HostServiceImpl) CreateGroup(input types.HostGroupCreateInput) (*types.HostGroup, error) {
-	g, err := dao.YdstermHostGroups.Create(context.Background(), input)
+	g, err := dao.YdstermHostGroups.Create(activeCtx(), input)
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +203,7 @@ func (s *HostServiceImpl) CreateGroup(input types.HostGroupCreateInput) (*types.
 }
 
 func (s *HostServiceImpl) UpdateGroup(input types.HostGroupUpdateInput) (*types.HostGroup, error) {
-	ctx := context.Background()
+	ctx := activeCtx()
 	data := make(map[string]interface{})
 	cols := dao.YdstermHostGroups.Columns()
 	if input.Name != nil {
@@ -218,11 +223,11 @@ func (s *HostServiceImpl) UpdateGroup(input types.HostGroupUpdateInput) (*types.
 }
 
 func (s *HostServiceImpl) DeleteGroup(id string) error {
-	return dao.YdstermHostGroups.Delete(context.Background(), id)
+	return dao.YdstermHostGroups.Delete(activeCtx(), id)
 }
 
 func (s *HostServiceImpl) ListGroups() ([]types.HostGroup, error) {
-	groups, err := dao.YdstermHostGroups.List(context.Background())
+	groups, err := dao.YdstermHostGroups.List(activeCtx())
 	if err != nil {
 		return nil, err
 	}

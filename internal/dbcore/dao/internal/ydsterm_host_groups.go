@@ -27,6 +27,7 @@ type YdstermHostGroupsColumns struct {
 	SortOrder string //
 	CreatedAt string //
 	UpdatedAt string //
+	SyncUser  string //
 }
 
 // ydstermHostGroupsColumns holds the columns for the table ydsterm_host_groups.
@@ -37,6 +38,7 @@ var ydstermHostGroupsColumns = YdstermHostGroupsColumns{
 	SortOrder: "sort_order",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
+	SyncUser:  "sync_user",
 }
 
 // NewYdstermHostGroupsDao creates and returns a new DAO object for table data access.

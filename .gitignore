@@ -21,3 +21,8 @@ build/android/gen/
 **.exe
 build
 frontend/bindings
+
+# Server build artifacts
+server/ydsterm-server
+server/ydsterm-server.db
+server/data/

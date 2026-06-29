@@ -16,4 +16,5 @@ type YdstermSnippetFolders struct {
 	SortOrder int         `json:"sortOrder" orm:"sort_order" description:""`
 	CreatedAt *gtime.Time `json:"createdAt" orm:"created_at" description:""`
 	UpdatedAt *gtime.Time `json:"updatedAt" orm:"updated_at" description:""`
+	SyncUser  string      `json:"syncUser"  orm:"sync_user"  description:""`
 }

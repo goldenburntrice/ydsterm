@@ -29,6 +29,7 @@ type YdstermSnippetsColumns struct {
 	SortOrder string //
 	CreatedAt string //
 	UpdatedAt string //
+	SyncUser  string //
 }
 
 // ydstermSnippetsColumns holds the columns for the table ydsterm_snippets.
@@ -41,6 +42,7 @@ var ydstermSnippetsColumns = YdstermSnippetsColumns{
 	SortOrder: "sort_order",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
+	SyncUser:  "sync_user",
 }
 
 // NewYdstermSnippetsDao creates and returns a new DAO object for table data access.

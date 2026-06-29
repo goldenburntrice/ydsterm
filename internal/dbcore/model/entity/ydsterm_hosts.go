@@ -23,4 +23,5 @@ type YdstermHosts struct {
 	CreatedAt   *gtime.Time `json:"createdAt"   orm:"created_at"   description:""`
 	UpdatedAt   *gtime.Time `json:"updatedAt"   orm:"updated_at"   description:""`
 	DeletedAt   *gtime.Time `json:"deletedAt"   orm:"deleted_at"   description:""`
+	SyncUser    string      `json:"syncUser"    orm:"sync_user"    description:""`
 }

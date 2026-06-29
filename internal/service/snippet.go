@@ -1,8 +1,6 @@
 package service
 
 import (
-	"context"
-
 	"ydsterm/internal/dbcore/dao"
 	"ydsterm/internal/types"
 )
@@ -12,7 +10,7 @@ type SnippetServiceImpl struct{}
 func NewSnippetService() *SnippetServiceImpl { return &SnippetServiceImpl{} }
 
 func (s *SnippetServiceImpl) Create(input types.SnippetCreateInput) (*types.Snippet, error) {
-	snip, err := dao.YdstermSnippets.Create(context.Background(), input)
+	snip, err := dao.YdstermSnippets.Create(activeCtx(), input)
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +18,7 @@ func (s *SnippetServiceImpl) Create(input types.SnippetCreateInput) (*types.Snip
 }
 
 func (s *SnippetServiceImpl) Update(input types.SnippetUpdateInput) (*types.Snippet, error) {
-	ctx := context.Background()
+	ctx := activeCtx()
 	data := make(map[string]interface{})
 	cols := dao.YdstermSnippets.Columns()
 
@@ -44,11 +42,11 @@ func (s *SnippetServiceImpl) Update(input types.SnippetUpdateInput) (*types.Snip
 }
 
 func (s *SnippetServiceImpl) Delete(id string) error {
-	return dao.YdstermSnippets.Delete(context.Background(), id)
+	return dao.YdstermSnippets.Delete(activeCtx(), id)
 }
 
 func (s *SnippetServiceImpl) Get(id string) (*types.Snippet, error) {
-	snip, err := dao.YdstermSnippets.Get(context.Background(), id)
+	snip, err := dao.YdstermSnippets.Get(activeCtx(), id)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +54,7 @@ func (s *SnippetServiceImpl) Get(id string) (*types.Snippet, error) {
 }
 
 func (s *SnippetServiceImpl) List(folderID string) ([]types.Snippet, error) {
-	snippets, err := dao.YdstermSnippets.List(context.Background(), folderID)
+	snippets, err := dao.YdstermSnippets.List(activeCtx(), folderID)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +66,7 @@ func (s *SnippetServiceImpl) List(folderID string) ([]types.Snippet, error) {
 }
 
 func (s *SnippetServiceImpl) CreateFolder(input types.SnippetFolderCreateInput) (*types.SnippetFolder, error) {
-	f, err := dao.YdstermSnippetFolders.Create(context.Background(), input)
+	f, err := dao.YdstermSnippetFolders.Create(activeCtx(), input)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +74,7 @@ func (s *SnippetServiceImpl) CreateFolder(input types.SnippetFolderCreateInput) 
 }
 
 func (s *SnippetServiceImpl) UpdateFolder(input types.SnippetFolderUpdateInput) (*types.SnippetFolder, error) {
-	ctx := context.Background()
+	ctx := activeCtx()
 	data := make(map[string]interface{})
 	cols := dao.YdstermSnippetFolders.Columns()
 	if input.Name != nil {
@@ -96,11 +94,11 @@ func (s *SnippetServiceImpl) UpdateFolder(input types.SnippetFolderUpdateInput) 
 }
 
 func (s *SnippetServiceImpl) DeleteFolder(id string) error {
-	return dao.YdstermSnippetFolders.Delete(context.Background(), id)
+	return dao.YdstermSnippetFolders.Delete(activeCtx(), id)
 }
 
 func (s *SnippetServiceImpl) ListFolders() ([]types.SnippetFolder, error) {
-	folders, err := dao.YdstermSnippetFolders.List(context.Background())
+	folders, err := dao.YdstermSnippetFolders.List(activeCtx())
 	if err != nil {
 		return nil, err
 	}
